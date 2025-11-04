@@ -1,152 +1,134 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import AddEmployeeModal from "../components/AddEmployeeModal";
+import {
+  FaCalendarCheck,
+  FaUsers,
+  FaSearch,
+  FaBell,
+  FaArrowRight,
+  FaBolt,
+  FaPlusCircle,
+  FaFileInvoiceDollar,
+  FaUserCircle,
+  FaCalendarAlt
+} from "react-icons/fa";
+import { MdFlightTakeoff } from "react-icons/md";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 sm:p-10 font-sans">
+    <div className="min-h-screen bg-gray-900 text-white p-6 sm:p-10 font-sans">
       <div className="max-w-7xl mx-auto">
+
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-xl shadow-lg p-6 mb-8 transform transition-transform duration-300 hover:scale-[1.01]">
-          <h1 className="text-3xl font-extrabold text-gray-800 mb-4 sm:mb-0">
-            Welcome back, <span className="text-indigo-600">{user?.name || "User"}</span>!
+        <div className="flex flex-col sm:flex-row justify-between items-center bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+          <h1 className="text-3xl font-extrabold text-white mb-4 sm:mb-0">
+            Welcome back, <span className="text-indigo-400">{user?.name || "User"}</span>!
           </h1>
           <button
             onClick={logout}
-            className="bg-red-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-200 text-lg font-medium"
+            className="bg-red-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-lg font-medium"
           >
             Logout
           </button>
         </div>
 
         {/* Dashboard Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Attendance Summary Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-blue-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 flex items-center">
-              <i className="fas fa-calendar-check text-indigo-500 mr-2 sm:mr-3"></i> Attendance Summary
-            </h2>
-            <p className="text-gray-700 text-base sm:text-lg mb-1 sm:mb-2">
-              <span className="font-semibold text-green-600">Total Days Present:</span> 22
-            </p>
-            <p className="text-gray-700 text-base sm:text-lg">
-              <span className="font-semibold text-red-600">Total Days Absent:</span> 2
-            </p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-10">
+          {/* Attendance Summary */}
+          <DashboardCard icon={<FaCalendarCheck className="text-indigo-400" />} title="Attendance Summary">
+            <p><span className="font-semibold text-green-400">Total Days Present:</span> 22</p>
+            <p><span className="font-semibold text-red-400">Total Days Absent:</span> 2</p>
+          </DashboardCard>
 
-          {/* Employee Directory Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-teal-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 flex items-center">
-              <i className="fas fa-users text-teal-500 mr-2 sm:mr-3"></i> Employee Directory
-            </h2>
-            <p className="text-gray-700 text-base sm:text-lg mb-3 sm:mb-4">Find contact information for your colleagues.</p>
-            <Link
-              to="/directory"
-              className="text-blue-500 hover:text-blue-700 underline text-base sm:text-lg font-medium flex items-center"
-            >
-              Browse Directory <i className="fas fa-search ml-1 sm:ml-2"></i>
+          {/* Employee Directory */}
+          <DashboardCard icon={<FaUsers className="text-teal-400" />} title="Employee Directory">
+            <p className="mb-3">Find contact information for your colleagues.</p>
+            <Link to="/directory" className="text-blue-400 hover:text-blue-300 underline flex items-center">
+              Browse Directory <FaSearch className="ml-2" />
             </Link>
-          </div>
+          </DashboardCard>
 
-          {/* New Employee Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-gray-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl text-center">
+          {/* New Employee */}
+          <div className="bg-gray-800 p-5 rounded-xl shadow-lg text-center">
             <img
               src="https://randomuser.me/api/portraits/men/32.jpg"
               alt="Employee"
               className="w-24 h-24 rounded-full mx-auto mb-4"
             />
-            <h3 className="text-xl font-semibold text-gray-800 mb-1">{user?.name || "John Doe"}</h3>
-            <p className="text-gray-600 mb-2">Software Developer</p>
+            <h3 className="text-xl font-semibold mb-1">{user?.name || "John Doe"}</h3>
+            <p className="text-gray-400 mb-1">Software Developer</p>
             <p className="text-gray-500 text-sm mb-3">{user?.email || "johndoe@example.com"}</p>
-            <Link
-              to="/profile"
-              className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
-            >
+            <Link to="/profile" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
               View Profile
             </Link>
           </div>
 
-          {/* Leave Summary Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-purple-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 flex items-center">
-              <i className="fas fa-plane-departure text-purple-500 mr-2 sm:mr-3"></i> Leave Summary
-            </h2>
-            <p className="text-gray-700 text-base sm:text-lg mb-1 sm:mb-2">
-              <span className="font-semibold text-yellow-600">Leaves Taken:</span> 4
-            </p>
-            <p className="text-gray-700 text-base sm:text-lg">
-              <span className="font-semibold text-blue-600">Remaining Leaves:</span> 8
-            </p>
-          </div>
+          {/* Leave Summary */}
+          <DashboardCard icon={<MdFlightTakeoff className="text-purple-400" />} title="Leave Summary">
+            <p><span className="font-semibold text-yellow-400">Leaves Taken:</span> 4</p>
+            <p><span className="font-semibold text-blue-400">Remaining Leaves:</span> 8</p>
+          </DashboardCard>
 
-          {/* Notifications Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-pink-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl flex flex-col justify-between">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 flex items-center">
-                <i className="fas fa-bell text-pink-500 mr-2 sm:mr-3"></i> Notifications
-              </h2>
-              <p className="text-gray-700 text-base sm:text-lg mb-1 sm:mb-2">
-                <span className="font-semibold">HR Announcements:</span> 2 New
-              </p>
-              <p className="text-gray-700 text-base sm:text-lg mb-3 sm:mb-4">
-                <span className="font-semibold">System Messages:</span> 1
-              </p>
-            </div>
-            <Link
-              to="/notifications"
-              className="text-indigo-600 hover:text-indigo-800 underline text-base sm:text-lg font-medium self-end"
-            >
-              View All Notifications <i className="fas fa-arrow-right ml-1"></i>
+          {/* Notifications */}
+          <DashboardCard icon={<FaBell className="text-pink-400" />} title="Notifications">
+            <p><span className="font-semibold">HR Announcements:</span> 2 New</p>
+            <p><span className="font-semibold">System Messages:</span> 1</p>
+            <Link to="/notifications" className="text-indigo-400 hover:text-indigo-300 underline mt-2 inline-block">
+              View All Notifications <FaArrowRight className="inline ml-2" />
             </Link>
-          </div>
+          </DashboardCard>
 
-          {/* Quick Actions Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-green-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 flex items-center">
-              <i className="fas fa-bolt text-green-500 mr-2 sm:mr-3"></i> Quick Actions
-            </h2>
-            <ul className="space-y-2 sm:space-y-3">
+          {/* Quick Actions */}
+          <DashboardCard icon={<FaBolt className="text-green-400" />} title="Quick Actions">
+            <ul className="space-y-2">
               <li>
-                <Link to="/apply-leave" className="text-blue-500 hover:text-blue-700 text-base sm:text-lg flex items-center">
-                  <i className="fas fa-plus-circle mr-2"></i> Apply for Leave
+                <Link to="/apply-leave" className="text-blue-400 hover:text-blue-300 flex items-center">
+                  <FaPlusCircle className="mr-2" /> Apply for Leave
                 </Link>
               </li>
               <li>
-                <Link to="/view-payslips" className="text-blue-500 hover:text-blue-700 text-base sm:text-lg flex items-center">
-                  <i className="fas fa-file-invoice-dollar mr-2"></i> View Payslips
+                <Link to="/view-payslips" className="text-blue-400 hover:text-blue-300 flex items-center">
+                  <FaFileInvoiceDollar className="mr-2" /> View Payslips
                 </Link>
               </li>
               <li>
-                <Link to="/profile" className="text-blue-500 hover:text-blue-700 text-base sm:text-lg flex items-center">
-                  <i className="fas fa-user-circle mr-2"></i> Update Profile
+                <Link to="/profile" className="text-blue-400 hover:text-blue-300 flex items-center">
+                  <FaUserCircle className="mr-2" /> Update Profile
                 </Link>
               </li>
             </ul>
-          </div>
+          </DashboardCard>
 
-          {/* Upcoming Events/Holidays Card */}
-          <div className="bg-white p-5 rounded-xl shadow-lg border border-orange-200 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 flex items-center">
-              <i className="fas fa-calendar-alt text-orange-500 mr-2 sm:mr-3"></i> Upcoming
-            </h2>
-            <ul className="space-y-2 sm:space-y-3">
-              <li className="text-gray-700 text-base sm:text-lg">
-                <span className="font-semibold">Aug 15:</span> Independence Day <span className="text-xs sm:text-sm text-gray-500">(Holiday)</span>
-              </li>
-              <li className="text-gray-700 text-base sm:text-lg">
-                <span className="font-semibold">Sep 10:</span> Team Meeting <span className="text-xs sm:text-sm text-gray-500">(10:00 AM)</span>
-              </li>
-              <li className="text-gray-700 text-base sm:text-lg">
-                <span className="font-semibold">Oct 2:</span> Gandhi Jayanti <span className="text-xs sm:text-sm text-gray-500">(Holiday)</span>
-              </li>
+          {/* Upcoming Events */}
+          <DashboardCard icon={<FaCalendarAlt className="text-orange-400" />} title="Upcoming">
+            <ul className="space-y-2">
+              <li><span className="font-semibold">Aug 15:</span> Independence Day <span className="text-xs text-gray-400">(Holiday)</span></li>
+              <li><span className="font-semibold">Sep 10:</span> Team Meeting <span className="text-xs text-gray-400">(10:00 AM)</span></li>
+              <li><span className="font-semibold">Oct 2:</span> Gandhi Jayanti <span className="text-xs text-gray-400">(Holiday)</span></li>
             </ul>
-          </div>
+          </DashboardCard>
         </div>
+
+        {/* Add Employee Modal */}
+        {showModal && <AddEmployeeModal onClose={() => setShowModal(false)} />}
       </div>
     </div>
   );
 };
 
+const DashboardCard = ({ icon, title, children }) => (
+  <div className="bg-gray-800 p-5 rounded-xl shadow-lg transform transition duration-300 hover:scale-[1.02] hover:shadow-xl">
+    <h2 className="text-xl font-bold mb-3 flex items-center">
+      {icon} <span className="ml-3">{title}</span>
+    </h2>
+    <div className="text-gray-300 text-sm space-y-1">{children}</div>
+  </div>
+);
+
 export default Dashboard;
+

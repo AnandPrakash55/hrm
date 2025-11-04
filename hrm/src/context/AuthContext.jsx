@@ -1,12 +1,9 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Create AuthContext
 const AuthContext = createContext();
-
-// Custom hook to use the context
 export const useAuth = () => useContext(AuthContext);
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
@@ -17,26 +14,52 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    // Dummy auth logic
-    if (email === "admin@example.com" && password === "admin123") {
-      const user = { name: "Admin", email, role: "Admin" };
+    // Dummy auth logic (replace with backend API later)
+
+    // --- Admin ---
+    if (email === "admin@hrm.com" && password === "admin123") {
+      const user = { name: "Admin", email, role: "admin", status: "approved" };
       setUser(user);
       localStorage.setItem("user", JSON.stringify(user));
-      return true;
+      return { success: true };
     }
-    if (email === "employee@example.com" && password === "emp123") {
-      const user = { name: "Employee", email, role: "Employee" };
+
+    // --- HR ---
+    if (email === "hr@hrm.com" && password === "hr123") {
+      const user = { name: "HR Manager", email, role: "hr", status: "approved" };
       setUser(user);
       localStorage.setItem("user", JSON.stringify(user));
-      return true;
+      return { success: true };
     }
-    return false;
+
+    // --- Employee (example with status) ---
+    // In real case, fetch from EmployeeContext or backend
+    const storedEmployees = JSON.parse(localStorage.getItem("employees")) || [];
+    const emp = storedEmployees.find(
+      (e) => e.email === email && e.password === password
+    );
+
+    if (emp) {
+      if (emp.status !== "approved") {
+        return { success: false, message: "Your account is pending HR approval." };
+      }
+      setUser(emp);
+      localStorage.setItem("user", JSON.stringify(emp));
+      return { success: true };
+    }
+
+    return { success: false, message: "Invalid credentials" };
   };
 
   const register = async ({ name, email, password, role }) => {
-    const newUser = { name, email, role };
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
+    // When Admin registers an employee → status is "pending"
+    const newUser = { name, email, password, role, status: "pending" };
+
+    // Save to employees list (simulate backend)
+    const employees = JSON.parse(localStorage.getItem("employees")) || [];
+    employees.push(newUser);
+    localStorage.setItem("employees", JSON.stringify(employees));
+
     return true;
   };
 
